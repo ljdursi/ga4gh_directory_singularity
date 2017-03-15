@@ -1,0 +1,71 @@
+# Xenial image for installing and running GA4GH server from sources
+
+BootStrap: debootstrap
+OSVersion: xenial
+MirrorURL: http://us.archive.ubuntu.com/ubuntu/
+Include: bash build-essential python2.7 apache2 git libcurl4-openssl-dev 
+
+%setup
+    mkdir -p "${SINGULARITY_ROOTFS}/srv/ga4gh"
+    mkdir -p "${SINGULARITY_ROOTFS}/usr/local/bin"
+    mkdir -p "${SINGULARITY_ROOTFS}/etc/apache2/sites-available"
+
+    # copy scripts and config files first
+    # scripts:
+    cp ./scripts/create_repo.sh "${SINGULARITY_ROOTFS}/usr/local/bin"
+    cp ./scripts/rename_directory.sh "${SINGULARITY_ROOTFS}/usr/local/bin"
+    cp ./scripts/wrapper.sh "${SINGULARITY_ROOTFS}/usr/local/bin"
+
+    # config files:
+    cp ./config/application.wsgi "${SINGULARITY_ROOTFS}/srv/ga4gh"
+    cp ./config/config.py "${SINGULARITY_ROOTFS}/srv/ga4gh/config.py"
+    cp ./config/000-default.conf "${SINGULARITY_ROOTFS}/etc/apache2/sites-available/000-default.conf"
+    cp ./config/ports.conf /etc/apache2/ports.conf
+
+%post
+    locale-gen en_US.UTF-8
+    update-locale 
+    export LC_ALL=en_US.UTF-8
+    apt-get install -y software-properties-common
+    apt-add-repository universe
+    apt-get update
+    apt-get install -y python-pip protobuf-compiler samtools tabix git zlib1g-dev libyaml-cpp-dev
+
+    # start installing the python packages
+    pip install protobuf==3.2.0 pyBigWig==0.3.2
+
+    # Could do pip install, but in general we will be building & installing our own version...
+    SERVER_VERSION=0.3.6  
+    SCHEMA_VERSION=0.6.0a10   # this is also the client version
+    SERVER_RELEASE=https://github.com/ga4gh/ga4gh-server/archive/v${SERVER_VERSION}.tar.gz
+    SCHEMA_RELEASE=https://github.com/ga4gh/ga4gh-schemas/archive/v${SCHEMA_VERSION}.tar.gz
+    CLIENT_RELEASE=https://github.com/ga4gh/ga4gh-client/archive/v${SCHEMA_VERSION}.tar.gz
+
+    # note: /tmp is bound to "host" /tmp, so clean this up...
+    cd /tmp
+    git clone https://github.com/ga4gh/ga4gh-schemas.git
+    cd ga4gh-schemas
+    git checkout tags/v${SCHEMA_VERSION} -b ${SCHEMA_VERSION}
+    sed -i -e 's/protobuf==3.1.0.post1/protobuf==3.2.0/' python/requirements.txt
+    python setup.py install
+    cd ..
+    rm -rf ga4gh-schemas
+
+    git clone https://github.com/ga4gh/ga4gh-server.git
+    cd ga4gh-server
+    git checkout tags/v${SERVER_VERSION} -b ${SERVER_VERSION}
+    sed -i -e 's/protobuf==3.1.0.post1/protobuf==3.2.0/' requirements.txt
+    python setup.py install
+    cd ..
+    rm -rf ga4gh-server
+
+    git clone https://github.com/ga4gh/ga4gh-client.git
+    cd ga4gh-client
+    git checkout tags/v${SCHEMA_VERSION} -b ${SCHEMA_VERSION}
+    sed -i -e 's/protobuf==3.1.0.post1/protobuf==3.2.0/' -e 's/ga4gh_schemas==0.6.0a10.post1/ga4gh_schemas==0.6.0a11.dev0+ng0328d20.d20170315/' requirements.txt
+    python setup.py install
+    cd ..
+    rm -rf ga4gh-client
+
+%runscript
+    exec /usr/local/bin/wrapper.sh "$@"
