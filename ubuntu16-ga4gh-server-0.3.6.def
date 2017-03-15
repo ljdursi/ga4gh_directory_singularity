@@ -53,7 +53,7 @@ Include: bash build-essential python2.7 apache2 git libssl-dev libcurl4-openssl-
     git clone https://github.com/ga4gh/ga4gh-client.git
     cd ga4gh-client
     git checkout tags/v${SCHEMA_VERSION} -b ${SCHEMA_VERSION}
-    sed -i".bak" -e 's/protobuf==3.1.0.post1/protobuf==3.2.0/' -e 's/ga4gh=schemas==0.6.0a10.post1/ga4gh=schemas==0.6.0a11.dev0+ng0328d20.d20170315/' requirements.txt
+    sed -i".bak" -e 's/protobuf==3.1.0.post1/protobuf==3.2.0/' -e 's/ga4gh-schemas==0.6.0a10.post1/ga4gh-schemas==0.6.0a11.dev0+ng0328d20.d20170315/' requirements.txt
     rm -f constraints.txt
     python setup.py install
     cd ..
