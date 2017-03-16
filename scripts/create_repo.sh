@@ -152,6 +152,7 @@ function main {
     bamidx "$datadir"
     vcfidx "$datadir"
     create_repo "$reference" "$datadir"
+    ga4gh_repo add-peer "$REPO" http://1kgenomes.ga4gh.org
     ga4gh_repo verify "$REPO"
 }
 

@@ -32,5 +32,5 @@ fi
 # these changes will not persist between invocatoins
 for file in "/srv/ga4gh/application.wsgi" "/srv/ga4gh/config.py" "/etc/apache2/sites-enabled/000-default.conf" "/etc/apache2/ports.conf" "/etc/apache2/envvars"
 do
-    sed -i.bak -e "s#@@DIRECTORY@@#${REPO_DIRECTORY}#" -e "s/@@HTTPPORT@@/${HTTP_PORT}/" "${file}"
+    sed -e "s#@@DIRECTORY@@#${REPO_DIRECTORY}#" -e "s/@@HTTPPORT@@/${HTTP_PORT}/" "${file}".tmpl > "${file}"
 done
