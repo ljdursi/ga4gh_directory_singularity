@@ -7,7 +7,8 @@ function usage {
     echo >&2 "$0: execute a command from the docker. "
     echo >&2 "    options: "
     echo >&2 "       init /path/to/reference.fa /path/to/data/directory : initializes a repo in a data directory"
-    echo >&2 "       serve /path/to/directory/containing/repo http_port : serves the repo"
+    echo >&2 "       config /path/to/data/directory http_port : configures apache (must be run as sudo .. run --writeable .. ) "
+    echo >&2 "       serve /path/to/directory/containing/repo : serves the repo"
     exit 1
 }
 
@@ -24,8 +25,10 @@ case $COMMAND in
     "init") 
         "${EXECUTABLE_PATH}/create_repo.sh" "${@:2}"
         ;;
-    "serve")
+    "config")
         "${EXECUTABLE_PATH}/rename_directory.sh" "$2" "$3"
+        ;;
+    "serve")
         exec apachectl -DFOREGROUND "${@:4}"
         ;;
     *)
