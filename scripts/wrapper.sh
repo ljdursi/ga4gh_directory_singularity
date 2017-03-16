@@ -25,7 +25,7 @@ case $COMMAND in
         "${EXECUTABLE_PATH}/create_repo.sh" "${@:2}"
         ;;
     "serve")
-        "${EXECUTABLE_PATH}/rename_directory $1 $2"
+        "${EXECUTABLE_PATH}/rename_directory.sh" "$2" "$3"
         exec apachectl -DFOREGROUND "${@:4}"
         ;;
     *)

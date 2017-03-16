@@ -11,12 +11,14 @@ function usage {
 if [[ -z "${REPO_DIRECTORY}" ]] 
 then
     echo >&2 "Missing arguments."
+    echo >&2 "Invoked as: $*"
     usage
 fi
     
 if [[ -z "${HTTP_PORT}" ]] 
 then
     echo >&2 "Missing arguments."
+    echo >&2 "Invoked as: $*"
     usage
 fi
     
