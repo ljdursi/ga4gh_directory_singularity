@@ -30,12 +30,7 @@ fi
     
 # Unless we run the singularity image with --writable,
 # these changes will not persist between invocatoins
-for file in "/srv/ga4gh/application.wsgi" "/srv/ga4gh/config.py" "/etc/apache2/sites-available/000-default.conf"
+for file in "/srv/ga4gh/application.wsgi" "/srv/ga4gh/config.py" "/etc/apache2/sites-enabled/000-default.conf" "/etc/apache2/ports.conf" "/etc/apache2/envvars"
 do
-    sed -i -e "s/@@DIRECTORY@@/${REPO_DIRECTORY}/" "${file}"
-done
-
-for file in "/etc/apache2/ports.conf"
-do
-    sed -i -e "s/@@HTTPPORT@@/${HTTP_PORT}/" "${file}"
+    sed -i.bak -e "s/@@DIRECTORY@@/${REPO_DIRECTORY}/" -e "s/@@HTTPPORT@@/${HTTP_PORT}/" "${file}"
 done

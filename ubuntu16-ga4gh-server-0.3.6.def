@@ -19,7 +19,7 @@ Include: bash build-essential python2.7 apache2 git libssl-dev libcurl4-openssl-
     # config files:
     cp ./config/application.wsgi "${SINGULARITY_ROOTFS}/srv/ga4gh"
     cp ./config/config.py "${SINGULARITY_ROOTFS}/srv/ga4gh/config.py"
-    cp ./config/000-default.conf "${SINGULARITY_ROOTFS}/etc/apache2/sites-available/000-default.conf"
+    cp ./config/000-default.conf "${SINGULARITY_ROOTFS}/etc/apache2/sites-enabled/000-default.conf"
     cp ./config/ports.conf "${SINGULARITY_ROOTFS}/etc/apache2/ports.conf"
     cp ./config/envvars "${SINGULARITY_ROOTFS}/etc/apache2/envvars"
 
