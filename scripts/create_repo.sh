@@ -153,8 +153,6 @@ function main {
     vcfidx "$datadir"
     create_repo "$reference" "$datadir"
     ga4gh_repo add-peer "$REPO" http://1kgenomes.ga4gh.org
-    mkdir -p ga4gh/server/templates
-    touch ga4gh/server/templates/initial_peers.txt
     ga4gh_repo verify "$REPO"
 }
 
